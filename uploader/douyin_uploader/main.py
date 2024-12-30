@@ -125,74 +125,75 @@ async def douyin_cookie_gen(account_file, phone_number):
                 if await page.wait_for_selector("text=扫码登录"): # 身份验证
                     douyin_logger.info("检测到身份验证")
 
-                    # 点击"接收短信验证"按钮
-                    await page.click("text=接收短信验证")
-                    douyin_logger.info("已点击'接收短信验证'")
-                    
-                    # 检查是否存在"接收短信验证"按钮
-                    if await page.wait_for_selector("text=接收短信验证"):
-                        douyin_logger.info("检测到'接收短信验证'标题")
-                        
-                        # 等待"获取验证码"按钮出现并点击
-                        await page.wait_for_selector("text=获取验证码")
-                        await page.click("text=获取验证码")
-                        douyin_logger.info("已点击'获取验证码'")
-                        
-                        # 读取验证码文件
-                        # vcode_file = 'cookies/vcode.txt'
-                        max_wait = 60  # 最多等待60秒
-                        vcode = ''
-                        start_time = asyncio.get_event_loop().time()
-                        
-                        while asyncio.get_event_loop().time() - start_time < max_wait:
-                            douyin_logger.info("开始读取验证码")
-                            if redis_client.ping():
-                                vcode = get_douyin_verification_code(phone_number)
-                                if vcode:
-                                    douyin_logger.info(f"从redis读取到验证码: {vcode}")
-                                    break
-                            await asyncio.sleep(5)  # 等待5秒后重试
-                        douyin_logger.info("退出vcode循环")
-                        if vcode:
-                            douyin_logger.info("准备开始输入")
-                            # 等待"获取验证码"按钮出现并点击
-                            await page.wait_for_selector(""" //*[@id="uc-second-verify"]/div/div/article/div[2]/div/div/div[1]/input """, timeout=500)
-                            await page.click(""" //*[@id="uc-second-verify"]/div/div/article/div[2]/div/div/div[1]/input """)
-                            douyin_logger.info("已点击'请输入验证码'")
-
-                            # 定位验证码输入框并输入验证码
-                            vcode_input = await page.wait_for_selector(""" //*[@id="uc-second-verify"]/div/div/article/div[2]/div/div/div[1]/input """)
-                            await vcode_input.fill(vcode)
-                            
-                            # 检查验证码是否成功填入
-                            input_value = await vcode_input.input_value()
-                            if input_value != vcode:
-                                douyin_logger.warning(f"验证码填入失败，尝试重新填入。预期：{vcode}，实际：{input_value}")
-                                await vcode_input.fill("")  # 清空输入框
-                                await vcode_input.type(vcode, delay=100)  # 使用 type 方法慢速输入
-                            
-                            # 再次检查
-                            input_value = await vcode_input.input_value()
-                            if input_value == vcode:
-                                douyin_logger.info("验证码已成功填入")
-                            else:
-                                douyin_logger.error(f"验证码填入失败。预期：{vcode}，实际：{input_value}")
-                                continue  # 跳过本次循环，重新尝试
-                            
-                            # 点击验证按钮
-                            verify_button = await page.wait_for_selector('//*[@id="uc-second-verify"]/div/div/article/div[3]/div/div[2]')
-                            await verify_button.click()
-                            douyin_logger.info("已点击验证按钮")
-                            
-                            # 等待验证结果
-                            await asyncio.sleep(5)
-                            
-                            # # 删除验证码文件
-                            # os.remove(vcode_file)
-                        else:
-                            douyin_logger.error("未能读取到有效的验证码")
-                    else:
-                        douyin_logger.info("未检测到'接收短信验证'按钮，可能不需要短信验证")
+                    # TODO 隐藏以下操作，切换为扫码登录
+                    # # 点击"接收短信验证"按钮
+                    # await page.click("text=接收短信验证")
+                    # douyin_logger.info("已点击'接收短信验证'")
+                    #
+                    # # 检查是否存在"接收短信验证"按钮
+                    # if await page.wait_for_selector("text=接收短信验证"):
+                    #     douyin_logger.info("检测到'接收短信验证'标题")
+                    #
+                    #     # 等待"获取验证码"按钮出现并点击
+                    #     await page.wait_for_selector("text=获取验证码")
+                    #     await page.click("text=获取验证码")
+                    #     douyin_logger.info("已点击'获取验证码'")
+                    #
+                    #     # 读取验证码文件
+                    #     # vcode_file = 'cookies/vcode.txt'
+                    #     max_wait = 60  # 最多等待60秒
+                    #     vcode = ''
+                    #     start_time = asyncio.get_event_loop().time()
+                    #
+                    #     while asyncio.get_event_loop().time() - start_time < max_wait:
+                    #         douyin_logger.info("开始读取验证码")
+                    #         if redis_client.ping():
+                    #             vcode = get_douyin_verification_code(phone_number)
+                    #             if vcode:
+                    #                 douyin_logger.info(f"从redis读取到验证码: {vcode}")
+                    #                 break
+                    #         await asyncio.sleep(5)  # 等待5秒后重试
+                    #     douyin_logger.info("退出vcode循环")
+                    #     if vcode:
+                    #         douyin_logger.info("准备开始输入")
+                    #         # 等待"获取验证码"按钮出现并点击
+                    #         await page.wait_for_selector(""" //*[@id="uc-second-verify"]/div/div/article/div[2]/div/div/div[1]/input """, timeout=500)
+                    #         await page.click(""" //*[@id="uc-second-verify"]/div/div/article/div[2]/div/div/div[1]/input """)
+                    #         douyin_logger.info("已点击'请输入验证码'")
+                    #
+                    #         # 定位验证码输入框并输入验证码
+                    #         vcode_input = await page.wait_for_selector(""" //*[@id="uc-second-verify"]/div/div/article/div[2]/div/div/div[1]/input """)
+                    #         await vcode_input.fill(vcode)
+                    #
+                    #         # 检查验证码是否成功填入
+                    #         input_value = await vcode_input.input_value()
+                    #         if input_value != vcode:
+                    #             douyin_logger.warning(f"验证码填入失败，尝试重新填入。预期：{vcode}，实际：{input_value}")
+                    #             await vcode_input.fill("")  # 清空输入框
+                    #             await vcode_input.type(vcode, delay=100)  # 使用 type 方法慢速输入
+                    #
+                    #         # 再次检查
+                    #         input_value = await vcode_input.input_value()
+                    #         if input_value == vcode:
+                    #             douyin_logger.info("验证码已成功填入")
+                    #         else:
+                    #             douyin_logger.error(f"验证码填入失败。预期：{vcode}，实际：{input_value}")
+                    #             continue  # 跳过本次循环，重新尝试
+                    #
+                    #         # 点击验证按钮
+                    #         verify_button = await page.wait_for_selector('//*[@id="uc-second-verify"]/div/div/article/div[3]/div/div[2]')
+                    #         await verify_button.click()
+                    #         douyin_logger.info("已点击验证按钮")
+                    #
+                    #         # 等待验证结果
+                    #         await asyncio.sleep(5)
+                    #
+                    #         # # 删除验证码文件
+                    #         # os.remove(vcode_file)
+                    #     else:
+                    #         douyin_logger.error("未能读取到有效的验证码")
+                    # else:
+                    #     douyin_logger.info("未检测到'接收短信验证'按钮，可能不需要短信验证")
 
                 print("循环检测第 2 步 => 发布视频")
                 # 检查是否已经登录成功
