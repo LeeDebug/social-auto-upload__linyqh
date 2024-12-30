@@ -96,7 +96,8 @@ async def douyin_cookie_gen(account_file, phone_number):
                     break
             except:
                 continue
-        
+
+        print("qr_code_element: ", qr_code_element)
         if qr_code_element:
             await qr_code_element.scroll_into_view_if_needed()
             qr_code_path = os.path.join(os.path.dirname(account_file), 'douyin_login_qr.png')
@@ -119,8 +120,9 @@ async def douyin_cookie_gen(account_file, phone_number):
 
         while not login_success and retry_count < max_retries:
             try:
+                print("循环检测第 1 步 => 扫码登录")
                 # 检查是否出现身份验证
-                if await page.wait_for_selector("text=身份验证"):
+                if await page.wait_for_selector("text=扫码登录"): # 身份验证
                     douyin_logger.info("检测到身份验证")
 
                     # 点击"接收短信验证"按钮
@@ -191,20 +193,24 @@ async def douyin_cookie_gen(account_file, phone_number):
                             douyin_logger.error("未能读取到有效的验证码")
                     else:
                         douyin_logger.info("未检测到'接收短信验证'按钮，可能不需要短信验证")
-                
+
+                print("循环检测第 2 步 => 发布视频")
                 # 检查是否已经登录成功
-                if await page.wait_for_selector("text=发布作品"):
-                    douyin_logger.info("检测到'发布作品'，登录成功")
+                if await page.wait_for_selector("text=发布视频"):
+                    douyin_logger.info("检测到'发布视频'，登录成功")
                     login_success = True
                     break
+
             except Exception as e:
                 douyin_logger.error(f"发生错误: {str(e)}")
                 retry_count += 1
                 await asyncio.sleep(1)  # 等待10秒后重试
-        
+
+        print("login_success: ", login_success)
         if login_success:
             # 登录成功后保存cookie
             await context.storage_state(path=account_file)
+            print("account_file: ", account_file)
             douyin_logger.info(f'Cookie已保存至：{account_file}')
         else:
             douyin_logger.error("登录失败，请手动完成登录操作")

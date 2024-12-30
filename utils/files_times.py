@@ -22,12 +22,15 @@ def get_title_and_hashtags_from_content(content: str):
 
 
 def get_title_and_hashtags(file_path):
+    print("get_title_and_hashtags > file_path: ", file_path)
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"文件不存在：{file_path}")
     
     with open(file_path, 'r', encoding='utf-8') as file:
+        print("get_title_and_hashtags > file: ", file)
         content = file.read()
-    
+        print("get_title_and_hashtags > content: ", content)
+
     return get_title_and_hashtags_from_content(content)
 
 
