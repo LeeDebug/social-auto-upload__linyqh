@@ -15,6 +15,7 @@ def get_absolute_path(relative_path: str, base_dir: str = None) -> str:
 
 
 def get_title_and_hashtags_from_content(content: str):
+    print("[files_times.py] get_title_and_hashtags_from_content > content type: ", type(content))
     lines = content.split('\n')
     title = lines[0].strip() if lines else ''
     tags = [tag.strip() for tag in lines[1:] if tag.strip()]
@@ -22,14 +23,15 @@ def get_title_and_hashtags_from_content(content: str):
 
 
 def get_title_and_hashtags(file_path):
-    print("get_title_and_hashtags > file_path: ", file_path)
+    print("[files_times.py] get_title_and_hashtags > file_path: ", file_path)
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"文件不存在：{file_path}")
     
     with open(file_path, 'r', encoding='utf-8') as file:
-        print("get_title_and_hashtags > file: ", file)
+        print("[files_times.py] get_title_and_hashtags > file: 编码", )
         content = file.read()
-        print("get_title_and_hashtags > content: ", content)
+        # TODO 这里报错！
+        print("[files_times.py] get_title_and_hashtags > content: ", )
 
     return get_title_and_hashtags_from_content(content)
 
