@@ -24,16 +24,28 @@ def get_title_and_hashtags_from_content(content: str):
 
 def get_title_and_hashtags(file_path):
     print("[files_times.py] get_title_and_hashtags > file_path: ", file_path)
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"文件不存在：{file_path}")
-    
-    with open(file_path, 'r', encoding='utf-8') as file:
-        print("[files_times.py] get_title_and_hashtags > file: 编码", )
-        content = file.read()
-        # TODO 这里报错！
-        print("[files_times.py] get_title_and_hashtags > content: ", )
 
-    return get_title_and_hashtags_from_content(content)
+    # 构造对应的元数据文件路径
+    meta_file_path = Path(file_path).with_suffix('.txt')
+    if not meta_file_path.exists():
+        raise FileNotFoundError(f"元数据文件不存在：{meta_file_path}")
+
+    encodings_to_try = ['utf-8', 'gbk', 'gb2312']  # 常见的编码列表
+    for encoding in encodings_to_try:
+        try:
+            with open(meta_file_path, 'r', encoding=encoding) as file:
+                content = file.read()
+                print(f"[files_times.py] get_title_and_hashtags > content (using {encoding}): ",
+                      content[:100])  # 打印前100个字符用于调试
+                return get_title_and_hashtags_from_content(content)
+        except UnicodeDecodeError:
+            print(f"Failed to read metadata file with encoding {encoding}. Trying next one...")
+            continue
+        except Exception as e:
+            print(f"An error occurred while reading the metadata file: {e}")
+            break
+    else:
+        raise ValueError("Could not read the metadata file with any of the provided encodings.")
 
 
 def generate_schedule_time_next_day(total_videos, videos_per_day, daily_times=None, timestamps=False, start_days=0):

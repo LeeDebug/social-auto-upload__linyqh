@@ -275,8 +275,10 @@ class DouYinVideo(object):
         while True:
             # 判断是是否进入视频发布页面，没进入，则自动等待到超时
             try:
+                # print("page: ", page)
                 await page.wait_for_url(
-                    "https://creator.douyin.com/creator-micro/content/publish?enter_from=publish_page")
+                    "https://creator.douyin.com/creator-micro/content/post/video?enter_from=publish_page"
+                )
                 break
             except:
                 douyin_logger.info(f'  [-] 正在等待进入视频发布页面...')
@@ -304,30 +306,31 @@ class DouYinVideo(object):
             await page.press(css_selector, "Space")
         douyin_logger.info(f'总共添加{len(self.tags)}个话题')
 
-        while True:
-            # 判断重新上传按钮是否存在，如果不存在，代表视频正在上传，则等待
-            try:
-                #  新版：定位重新上传
-                number = await page.locator('div label+div:has-text("重新上传")').count()
-                if number > 0:
-                    douyin_logger.success("  [-]视频上传完毕")
-                    break
-                else:
-                    douyin_logger.info("  [-] 正在上传视频中...")
-                    await asyncio.sleep(2)
-
-                    if await page.locator('div.progress-div > div:has-text("上传失败")').count():
-                        douyin_logger.error("  [-] 发现上传出错了... 准备重试")
-                        await self.handle_upload_error(page)
-            except:
-                douyin_logger.info("  [-] 正上传视频中...")
-                await asyncio.sleep(2)
+        # TODO 暂时隐藏 检测重新上传（因为一开始默认上传成功了，并且这个按钮好像一直在）
+        # while True:
+        #     # 判断重新上传按钮是否存在，如果不存在，代表视频正在上传，则等待
+        #     try:
+        #         #  新版：定位重新上传
+        #         number = await page.locator('div label+div:has-text("重新上传")').count()
+        #         if number > 0:
+        #             douyin_logger.success("  [-]视频上传完毕")
+        #             break
+        #         else:
+        #             douyin_logger.info("  [-] 正在上传视频中...")
+        #             await asyncio.sleep(2)
+        #
+        #             if await page.locator('div.progress-div > div:has-text("上传失败")').count():
+        #                 douyin_logger.error("  [-] 发现上传出错了... 准备重试")
+        #                 await self.handle_upload_error(page)
+        #     except:
+        #         douyin_logger.info("  [-] 正上传视频中...")
+        #         await asyncio.sleep(2)
         
         #上传视频封面
         await self.set_thumbnail(page, self.thumbnail_path)
 
         # 更换可见元素
-        await self.set_location(page, "杭州市")
+        await self.set_location(page, "青岛市")
 
         # 頭條/西瓜
         third_part_element = '[class^="info"] > [class^="first-part"] div div.semi-switch'
@@ -364,16 +367,18 @@ class DouYinVideo(object):
         await browser.close()
     
     async def set_thumbnail(self, page: Page, thumbnail_path: str):
+        print("thumbnail_path: ", thumbnail_path)
         if thumbnail_path:
             await page.click('text="选择封面"')
-            await page.wait_for_selector("div.semi-modal-content:visible")
-            await page.click('text="上传封面"')
+            await page.wait_for_selector("div.semi-modal-content.semi-modal-content-animate-show", state='visible')
+            # await page.click('div.semi-upload.upload-BvM5FF') # text="上传封面"
             # 定位到上传区域并点击
             await page.locator("div[class^='semi-upload upload'] >> input.semi-upload-hidden-input").set_input_files(thumbnail_path)
             await page.wait_for_timeout(2000)  # 等2秒
-            await page.locator("div[class^='uploadCrop'] button:has-text('完成')").click()
+            # await page.locator("div[class^='semi-button semi-button-primary semi-button-light secondary-zU1YLr'] button:has-text('完成')").click()
+            await page.click('text="完成"')
 
-    async def set_location(self, page: Page, location: str = "杭州市"):
+    async def set_location(self, page: Page, location: str = "青岛市"):
         # todo supoort location later
         # await page.get_by_text('添加标签').locator("..").locator("..").locator("xpath=following-sibling::div").locator(
         #     "div.semi-select-single").nth(0).click()

@@ -28,14 +28,21 @@ if __name__ == '__main__':
         print("[upload2douyin.py] for -> =======================")
         print("[upload2douyin.py] for -> index: ", index)
         print("[upload2douyin.py] for -> file: ", file)
-        title, tags = get_title_and_hashtags(str(file))
-        thumbnail_path = file.with_suffix('.png')
-        # 打印视频文件名、标题和 hashtag
+
+        # 获取视频文件对应的元数据文件路径
+        meta_file_path = file.with_suffix('.txt')
+
+        # 如果存在元数据文件，则从中获取标题和标签
+        if meta_file_path.exists():
+            title, tags = get_title_and_hashtags(str(meta_file_path))
+        else:
+            # 如果没有元数据文件，可以提供默认值或者抛出异常
+            title, tags = "默认标题", ["#默认标签"]
+
+        thumbnail_path = file.with_suffix('.png') if file.with_suffix('.png').exists() else None
         print(f"视频文件名：{file}")
         print(f"标题：{title}")
         print(f"Hashtag：{tags}")
-        if thumbnail_path.exists():
-            app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
-        else:
-            app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file)
+
+        app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
         asyncio.run(app.main(), debug=False)
