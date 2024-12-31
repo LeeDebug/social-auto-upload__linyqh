@@ -1,6 +1,14 @@
 import time
 from pathlib import Path
 
+# ! 如果要在根目录调用该文件，需要添加以下代码
+import sys
+# 获取当前文件的父目录（即 'src' 目录）的父目录（即项目根目录）
+project_root = Path(__file__).parent.parent.resolve()
+# 将项目根目录添加到 Python 的模块搜索路径中
+if str(project_root) not in sys.path:
+    sys.path.append(str(project_root))
+
 from uploader.bilibili_uploader.main import read_cookie_json_file, extract_keys_from_json, random_emoji, BilibiliUploader
 from conf import BASE_DIR
 from utils.constant import VideoZoneTypes
