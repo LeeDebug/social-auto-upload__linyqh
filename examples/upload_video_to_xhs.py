@@ -4,12 +4,20 @@ from time import sleep
 
 from xhs import XhsClient
 
+# ! 如果要在根目录调用该文件，需要添加以下代码
+import sys
+# 获取当前文件的父目录（即 'src' 目录）的父目录（即项目根目录）
+project_root = Path(__file__).parent.parent.resolve()
+# 将项目根目录添加到 Python 的模块搜索路径中
+if str(project_root) not in sys.path:
+    sys.path.append(str(project_root))
+
 from conf import BASE_DIR
 from utils.files_times import generate_schedule_time_next_day, get_title_and_hashtags
 from uploader.xhs_uploader.main import sign_local, beauty_print
 
 config = configparser.RawConfigParser()
-config.read(Path(BASE_DIR / "uploader" / "xhs_uploader" / "accounts.ini"))
+config.read(Path(BASE_DIR / "cookies" / "xhs_uploader" / "accounts.ini"))
 
 
 if __name__ == '__main__':
@@ -54,6 +62,7 @@ if __name__ == '__main__':
                 hash_tag_name = topic_one['name']
                 hash_tags.append(hash_tag_name)
                 topics.append(topic_one)
+        print("topics: ", topics)
 
         hash_tags_str = ' ' + ' '.join(['#' + tag + '[话题]#' for tag in hash_tags])
 
