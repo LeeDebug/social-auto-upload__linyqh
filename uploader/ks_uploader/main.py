@@ -56,9 +56,17 @@ async def get_ks_cookie(account_file):
         # Pause the page, and start recording manually.
         page = await context.new_page()
         await page.goto("https://cp.kuaishou.com")
-        await page.pause()
-        # 点击调试器的继续，保存cookie
+        await page.click('text="立即登录"')
+        await page.click('text="扫码登录"')
+        await page.wait_for_url("https://cp.kuaishou.com/profile")
+
+        # TODO 点击调试器的继续，保存cookie
+        # await page.pause()
+
+        # 保存cookie
         await context.storage_state(path=account_file)
+        kuaishou_logger.success("[+] account 文件写入成功")
+        kuaishou_logger.info("[+] 如需检测 cookie 是否有效，请重新运行该脚本")
 
 
 class KSVideo(object):
