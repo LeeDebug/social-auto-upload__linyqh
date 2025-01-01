@@ -361,7 +361,7 @@ class DouYinVideo(object):
 
         await context.storage_state(path=self.account_file)  # 保存cookie
         douyin_logger.success('  [-]cookie更新完毕！')
-        await asyncio.sleep(2)  # 这里延迟是为了方便眼睛直观的观看
+        await asyncio.sleep(30)  # 这里延迟是为了方便眼睛直观的观看
         # 关闭浏览上下文和浏览器实例
         await context.close()
         await browser.close()
