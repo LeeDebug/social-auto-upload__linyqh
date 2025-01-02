@@ -12,7 +12,7 @@ if str(project_root) not in sys.path:
 from conf import BASE_DIR
 # from tk_uploader.main import tiktok_setup, TiktokVideo
 from uploader.tk_uploader.main_chrome import tiktok_setup, TiktokVideo
-from utils.files_times import generate_schedule_time_next_day, get_title_and_hashtags
+from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 
 
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # get video files from folder
     files = list(folder_path.glob("*.mp4"))
     file_num = len(files)
-    publish_datetimes = generate_schedule_time_next_day(file_num, 1, daily_times=[6])
+    publish_datetimes = generate_schedule_time_any_day(file_num, 1, daily_times=[6])
     cookie_setup = asyncio.run(tiktok_setup(account_file, handle=True))
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))

@@ -12,7 +12,7 @@ if str(project_root) not in sys.path:
 from uploader.bilibili_uploader.main import read_cookie_json_file, extract_keys_from_json, random_emoji, BilibiliUploader
 from conf import BASE_DIR
 from utils.constant import VideoZoneTypes
-from utils.files_times import generate_schedule_time_next_day, get_title_and_hashtags
+from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 
 if __name__ == '__main__':
     filepath = Path(BASE_DIR) / "videos"
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # 获取文件夹中的所有文件
     files = list(folder_path.glob("*.mp4"))
     file_num = len(files)
-    timestamps = generate_schedule_time_next_day(file_num, 1, daily_times=[6], timestamps=True)
+    timestamps = generate_schedule_time_any_day(file_num, 1, daily_times=[6], timestamps=True)
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))

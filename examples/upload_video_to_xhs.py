@@ -13,7 +13,7 @@ if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
 
 from conf import BASE_DIR
-from utils.files_times import generate_schedule_time_next_day, get_title_and_hashtags
+from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 from uploader.xhs_uploader.main import sign_local, beauty_print
 
 config = configparser.RawConfigParser()
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         print("cookie 失效")
         exit()
 
-    publish_datetimes = generate_schedule_time_next_day(file_num, 1, daily_times=[6])
+    publish_datetimes = generate_schedule_time_any_day(file_num, 1, daily_times=[6])
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))

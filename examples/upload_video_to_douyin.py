@@ -11,7 +11,7 @@ if str(project_root) not in sys.path:
 
 from conf import BASE_DIR
 from uploader.douyin_uploader.main import douyin_setup, DouYinVideo
-from utils.files_times import generate_schedule_time_next_day, get_title_and_hashtags
+from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 
 
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # 获取文件夹中的所有文件
     files = list(folder_path.glob("*.mp4"))
     file_num = len(files)
-    publish_datetimes = generate_schedule_time_next_day(file_num, 1, daily_times=[6])
+    publish_datetimes = generate_schedule_time_any_day(file_num, 1, daily_times=[6])
     cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
     for index, file in enumerate(files):
         print("[upload2douyin.py] for -> =======================")
