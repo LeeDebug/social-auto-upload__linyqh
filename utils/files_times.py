@@ -46,70 +46,47 @@ def get_title_and_hashtags(file_path):
         raise ValueError("Could not read the metadata file with any of the provided encodings.")
 
 
-def generate_schedule_time_any_day(total_videos, videos_per_day, start_time_today, daily_times=None, timestamps=False):
+def generate_schedule_time_any_day(total_videos, videos_per_day, daily_times=None, timestamps=False, start_days=0):
     """
-    Generate a schedule for video uploads, starting from a specific time today.
+    Generate a schedule for video uploads, starting from the next day.
 
     Args:
-    - total_videos (int): Total number of videos to be uploaded.
-    - videos_per_day (int): Number of videos to be uploaded each day.
-    - start_time_today (str or datetime): The starting time today, either as a 'HH:MM' formatted string or a datetime object.
-    - daily_times (list, optional): List of specific times (hours) in a day to publish videos. Defaults to evenly spaced times.
-    - timestamps (bool, optional): Whether to return Unix timestamps instead of datetime objects. Defaults to False.
+    - total_videos: Total number of videos to be uploaded.
+    - videos_per_day: Number of videos to be uploaded each day.
+    - daily_times: Optional list of specific times of the day to publish the videos.
+    - timestamps: Boolean to decide whether to return timestamps or datetime objects.
+    - start_days: Start from after start_days.
 
     Returns:
-    - list: List of scheduling times as either datetime objects or Unix timestamps.
-
-    Raises:
-    - ValueError: If videos_per_day is not positive or exceeds the length of daily_times.
-    - ValueError: If start_time_today is not a valid datetime or string in 'HH:MM' format.
+    - A list of scheduling times for the videos, either as timestamps or datetime objects.
     """
-    # Validate videos_per_day
     if videos_per_day <= 0:
         raise ValueError("videos_per_day should be a positive integer")
 
-    # Parse start_time_today if it's a string in 'HH:MM' format
-    if isinstance(start_time_today, str):
-        try:
-            start_hour, start_minute = map(int, start_time_today.split(':'))
-            now = datetime.now()
-            start_time_today = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
-        except ValueError:
-            raise ValueError("start_time_today should be a datetime object or a string in 'HH:MM' format")
-
-    # Validate start_time_today type
-    if not isinstance(start_time_today, datetime):
-        raise ValueError("start_time_today should be a datetime object or a valid 'HH:MM' formatted string")
-
-    # Generate default daily_times if not provided
     if daily_times is None:
-        daily_times = [i for i in range(0, 24, 24 // videos_per_day)]
+        # Default times to publish videos if not provided
+        daily_times = [6, 11, 14, 16, 22]
 
-    # Validate daily_times length
     if videos_per_day > len(daily_times):
         raise ValueError("videos_per_day should not exceed the length of daily_times")
 
-    # Initialize the schedule list
+    # Generate timestamps
     schedule = []
+    current_time = datetime.now()
 
-    # Generate schedule for each video
     for video in range(total_videos):
-        # Determine which day the video will be published
-        day_offset = video // videos_per_day
-
-        # Determine the time slot for this video
+        day = video // videos_per_day + start_days + 1  # +1 to start from the next day
         daily_video_index = video % videos_per_day
-        scheduled_time = start_time_today + timedelta(
-            days=day_offset,  # Add day offset
-            hours=daily_times[daily_video_index] - start_time_today.hour  # Adjust hour difference
-        )
 
-        # Append the scheduled time
-        schedule.append(scheduled_time)
+        # Calculate the time for the current video
+        hour = daily_times[daily_video_index]
+        time_offset = timedelta(days=day, hours=hour - current_time.hour, minutes=-current_time.minute,
+                                seconds=-current_time.second, microseconds=-current_time.microsecond)
+        timestamp = current_time + time_offset
 
-    # Convert to Unix timestamps if requested
+        schedule.append(timestamp)
+
     if timestamps:
         schedule = [int(time.timestamp()) for time in schedule]
-
     return schedule
 
