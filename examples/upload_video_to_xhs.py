@@ -1,4 +1,5 @@
 import configparser
+from datetime import datetime
 from pathlib import Path
 from time import sleep
 
@@ -21,12 +22,15 @@ config.read(Path(BASE_DIR / "cookies" / "xhs_uploader" / "accounts.ini"))
 
 
 if __name__ == '__main__':
-    filepath = Path(BASE_DIR) / "videos"
+    # 以今天日期当做要发布的文件夹
+    filepath = Path(BASE_DIR) / "videos" / "backups" / datetime.now().strftime("%Y-%m-%d")
     # 获取视频目录
     folder_path = Path(filepath)
     # 获取文件夹中的所有文件
     files = list(folder_path.glob("*.mp4"))
     file_num = len(files)
+    if file_num == 0:
+        raise ValueError("要发布的文件夹或视频不存在")
 
     cookies = config['account1']['cookies']
     xhs_client = XhsClient(cookies, sign=sign_local, timeout=60)
@@ -38,7 +42,8 @@ if __name__ == '__main__':
         print("cookie 失效")
         exit()
 
-    publish_datetimes = generate_schedule_time_any_day(file_num, 1, daily_times=[6])
+    publish_datetimes = generate_schedule_time_any_day(file_num, 1,
+                                                       daily_times=[6], start_date="1")
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))

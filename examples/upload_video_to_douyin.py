@@ -1,3 +1,4 @@
+from datetime import datetime
 import asyncio
 from pathlib import Path
 
@@ -15,20 +16,22 @@ from utils.files_times import generate_schedule_time_any_day, get_title_and_hash
 
 
 if __name__ == '__main__':
-    filepath = Path(BASE_DIR) / "videos"
+    # 以今天日期当做要发布的文件夹
+    filepath = Path(BASE_DIR) / "videos" / "backups" / datetime.now().strftime("%Y-%m-%d")
     account_file = Path(BASE_DIR / "cookies" / "douyin_uploader" / "account.json")
     # 获取视频目录
     folder_path = Path(filepath)
     # 获取文件夹中的所有文件
     files = list(folder_path.glob("*.mp4"))
     file_num = len(files)
-    publish_datetimes = generate_schedule_time_any_day(file_num, 1, daily_times=[6])
-    cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
-    for index, file in enumerate(files):
-        print("[upload2douyin.py] for -> =======================")
-        print("[upload2douyin.py] for -> index: ", index)
-        print("[upload2douyin.py] for -> file: ", file)
+    if file_num == 0:
+        raise ValueError("要发布的文件夹或视频不存在")
 
+    publish_datetimes = generate_schedule_time_any_day(file_num, 1,
+                                                       daily_times=[6], start_date="1")
+    cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
+
+    for index, file in enumerate(files):
         # 获取视频文件对应的元数据文件路径
         meta_file_path = file.with_suffix('.txt')
 

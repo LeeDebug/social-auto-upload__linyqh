@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from pathlib import Path
 
 # ! 如果要在根目录调用该文件，需要添加以下代码
@@ -15,7 +16,9 @@ from utils.constant import VideoZoneTypes
 from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 
 if __name__ == '__main__':
-    filepath = Path(BASE_DIR) / "videos"
+    # 以今天日期当做要发布的文件夹
+    filepath = Path(BASE_DIR) / "videos" / "backups" / datetime.now().strftime("%Y-%m-%d")
+    print("filepath: ", filepath)
     # how to get cookie, see the file of get_bilibili_cookie.py.
     account_file = Path(BASE_DIR / "cookies" / "bilibili_uploader" / "account.json")
     if not account_file.exists():
@@ -30,17 +33,21 @@ if __name__ == '__main__':
     # 获取文件夹中的所有文件
     files = list(folder_path.glob("*.mp4"))
     file_num = len(files)
-    timestamps = generate_schedule_time_any_day(file_num, 1, daily_times=[6], timestamps=True)
+    if file_num == 0:
+        raise ValueError("要发布的文件夹或视频不存在")
+
+    timestamps = generate_schedule_time_any_day(file_num, 1,
+                                                daily_times=[6], start_date="1", timestamps=True)
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))
         # just avoid error, bilibili don't allow same title of video.
         title += random_emoji()
-        tags_str = ','.join([tag for tag in tags])
+        tags_str = ' '.join(','.join([tag for tag in tags]).split()[:5])
         # 打印视频文件名、标题和 hashtag
         print(f"视频文件名：{file}")
         print(f"标题：{title}")
-        print(f"Hashtag：{tags}")
+        print(f"Hashtag：{tags_str}")
         # I set desc same as title, do what u like.
         desc = title
         bili_uploader = BilibiliUploader(cookie_data, file, title, desc, tid, tags, timestamps[index])
