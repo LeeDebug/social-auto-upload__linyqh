@@ -19,7 +19,7 @@ async def cookie_auth(account_file):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://me.weibo.com/content/video")
+        await page.goto("https://me.baijiahao.com/content/video")
         try:
             await page.wait_for_selector("div.woo-panel-main div.LoginCard_con_3LLIV button.LoginCard_btn_Jp_u1 span.woo-button-wrap span.woo-button-content span.LoginCard_text_3BtVI:text('立即')", timeout=5000)  # 等待5秒
 
@@ -30,17 +30,17 @@ async def cookie_auth(account_file):
             return True
 
 
-async def weibo_setup(account_file, handle=False):
-    account_file = get_absolute_path(account_file, "weibo_uploader")
+async def baijiahao_setup(account_file, handle=False):
+    account_file = get_absolute_path(account_file, "baijiahao_uploader")
     if not os.path.exists(account_file) or not await cookie_auth(account_file):
         if not handle:
             return False
         kuaishou_logger.info('[+] cookie文件不存在或已失效，即将自动打开浏览器，请扫码登录，登陆后会自动生成cookie文件')
-        await get_weibo_cookie(account_file)
+        await get_baijiahao_cookie(account_file)
     return True
 
 
-async def get_weibo_cookie(account_file):
+async def get_baijiahao_cookie(account_file):
     async with async_playwright() as playwright:
         options = {
             'args': [
@@ -55,11 +55,11 @@ async def get_weibo_cookie(account_file):
         context = await set_init_script(context)
         # Pause the page, and start recording manually.
         page = await context.new_page()
-        await page.goto("https://passport.weibo.com/sso/signin")
+        await page.goto("https://aigc.baidu.com/welcome")
         # await page.click('text="立即登录"')
         # await page.click('text="扫码登录"')
-        await page.wait_for_url("https://weibo.com/")
-        await page.goto("https://me.weibo.com/content/video")
+        await page.wait_for_url("https://aigc.baidu.com/works")
+        await page.goto("https://me.baijiahao.com/content/video")
 
         # TODO 点击调试器的继续，保存cookie
         # await page.pause()
@@ -70,7 +70,7 @@ async def get_weibo_cookie(account_file):
         kuaishou_logger.info("[+] 如需检测 cookie 是否有效，请重新运行该脚本")
 
 
-class WeiBoVideo(object):
+class BaiJiaHaoVideo(object):
     def __init__(self, title, file_path, tags, publish_date: datetime, account_file):
         self.title = title  # 视频标题
         self.file_path = file_path
@@ -103,11 +103,11 @@ class WeiBoVideo(object):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://weibo.com/upload/channel")
+        await page.goto("https://baijiahao.com/upload/channel")
         kuaishou_logger.info('正在上传-------{}.mp4'.format(self.title))
         # 等待页面跳转到指定的 URL，没进入，则自动等待到超时
         kuaishou_logger.info('正在打开主页...')
-        await page.wait_for_url("https://weibo.com/upload/channel")
+        await page.wait_for_url("https://baijiahao.com/upload/channel")
         # 点击 "上传视频" 按钮
         upload_button = page.locator("div[class^='Audio_videobox'] button[id^='video_button_upload'] span.woo-button-content:text('上传视频')")
         await upload_button.wait_for(state='visible')  # 确保按钮可见
