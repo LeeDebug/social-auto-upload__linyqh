@@ -12,3 +12,5 @@ fastapi
 uvicorn
 minio
 redis
+wxPython
+PyQt5
