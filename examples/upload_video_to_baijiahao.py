@@ -11,14 +11,14 @@ if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
 
 from conf import BASE_DIR
-from uploader.weibo_uploader.main import weibo_setup, WeiBoVideo
+from uploader.baijiahao_uploader.main import baijiahao_setup, BaiJiaHaoVideo
 from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 
 
 if __name__ == '__main__':
     # 以今天日期当做要发布的文件夹
     filepath = Path(BASE_DIR) / "videos" / "backups" / datetime.now().strftime("%Y-%m-%d")
-    account_file = Path(BASE_DIR / "cookies" / "weibo_uploader" / "account.json")
+    account_file = Path(BASE_DIR / "cookies" / "baijiahao_uploader" / "account.json")
     # 获取视频目录
     folder_path = Path(filepath)
     # 获取文件夹中的所有文件
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     publish_datetimes = generate_schedule_time_any_day(file_num, 1,
                                                        daily_times=[6], start_date="1")
-    cookie_setup = asyncio.run(weibo_setup(account_file, handle=False))
+    cookie_setup = asyncio.run(baijiahao_setup(account_file, handle=False))
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         print(f"视频文件名：{file}")
         print(f"标题：{title}")
         print(f"Hashtag：{tags}")
-        app = WeiBoVideo(title, file, tags, publish_datetimes[index], account_file)
+        app = BaiJiaHaoVideo(title, file, tags, publish_datetimes[index], account_file)
         asyncio.run(app.main(), debug=False)
 
 """
