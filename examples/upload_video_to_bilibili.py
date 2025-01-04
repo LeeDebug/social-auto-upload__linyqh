@@ -36,8 +36,8 @@ if __name__ == '__main__':
     if file_num == 0:
         raise ValueError("要发布的文件夹或视频不存在")
 
-    timestamps = generate_schedule_time_any_day(file_num, 1,
-                                                daily_times=[6], start_date="1", timestamps=True)
+    timestamps = generate_schedule_time_any_day(file_num, 2,
+                                                daily_times=[19, 21], start_date="0", timestamps=True)
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))

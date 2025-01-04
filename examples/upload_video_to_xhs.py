@@ -42,8 +42,8 @@ if __name__ == '__main__':
         print("cookie 失效")
         exit()
 
-    publish_datetimes = generate_schedule_time_any_day(file_num, 1,
-                                                       daily_times=[6], start_date="1")
+    publish_datetimes = generate_schedule_time_any_day(file_num, 2,
+                                                daily_times=[20, 21], start_date="0")
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))

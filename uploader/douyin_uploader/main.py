@@ -349,6 +349,7 @@ class DouYinVideo(object):
             try:
                 publish_button = page.get_by_role('button', name="发布", exact=True)
                 if await publish_button.count():
+                    await asyncio.sleep(10)  # 这里延迟是为了方便眼睛直观的观看
                     await publish_button.click()
                 await page.wait_for_url("https://creator.douyin.com/creator-micro/content/manage**",
                                         timeout=3000)  # 如果自动跳转到作品页面，则代表发布成功
