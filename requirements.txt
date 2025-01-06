@@ -13,4 +13,4 @@ uvicorn
 minio
 redis
 wxPython
-PyQt5
+PyQt6
