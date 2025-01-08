@@ -200,7 +200,7 @@ class KSVideo(object):
         await asyncio.sleep(2)  # 这里延迟是为了方便眼睛直观的观看
         # 关闭浏览器上下文和浏览器实例
         await context.close()
-        await browser.close()
+        # await browser.close()
 
     async def main(self):
         async with async_playwright() as playwright:
