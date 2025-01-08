@@ -14,6 +14,10 @@ from conf import BASE_DIR
 from uploader.weibo_uploader.main import weibo_setup, WeiBoVideo
 from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 
+"""
+TODO 经常提示 400 错误
+TODO 经常需要手动验证
+"""
 
 if __name__ == '__main__':
     # 以今天日期当做要发布的文件夹
