@@ -277,7 +277,7 @@ class DouYinVideo(object):
             try:
                 # print("page: ", page)
                 await page.wait_for_url(
-                    "https://creator.douyin.com/creator-micro/content/post/video?enter_from=publish_page"
+                    "https://creator.douyin.com/creator-micro/content/publish?enter_from=publish_page"
                 )
                 break
             except:
