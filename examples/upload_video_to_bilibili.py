@@ -36,21 +36,21 @@ if __name__ == '__main__':
     if file_num == 0:
         raise ValueError("要发布的文件夹或视频不存在")
 
-    timestamps = generate_schedule_time_any_day(file_num, 2,
-                                                daily_times=[19, 20], start_date="0", timestamps=True)
+    timestamps = generate_schedule_time_any_day(file_num, 1,
+                                                daily_times=[14], start_date="0", timestamps=True)
 
     for index, file in enumerate(files):
         title, tags = get_title_and_hashtags(str(file))
         # just avoid error, bilibili don't allow same title of video.
         title += random_emoji()
-        tags_str = ' '.join(','.join([tag for tag in tags]).split()[:5])
+        tags_str = ' '.join(','.join([tag for tag in tags]).split()[:3])
         # 打印视频文件名、标题和 hashtag
         print(f"视频文件名：{file}")
         print(f"标题：{title}")
-        print(f"Hashtag：{tags_str}")
+        print(f"Hashtag：{[tags_str]}")
         # I set desc same as title, do what u like.
         desc = title
-        bili_uploader = BilibiliUploader(cookie_data, file, title, desc, tid, tags, timestamps[index])
+        bili_uploader = BilibiliUploader(cookie_data, file, title, desc, tid, [tags_str], timestamps[index])
         bili_uploader.upload()
 
         # life is beautiful don't so rush. be kind be patience
