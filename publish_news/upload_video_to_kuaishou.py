@@ -4,6 +4,8 @@ from pathlib import Path
 
 # ! 如果要在根目录调用该文件，需要添加以下代码
 import sys
+from time import sleep
+
 # 获取当前文件的父目录（即 'src' 目录）的父目录（即项目根目录）
 project_root = Path(__file__).parent.parent.resolve()
 # 将项目根目录添加到 Python 的模块搜索路径中
@@ -39,3 +41,5 @@ if __name__ == '__main__':
         print(f"Hashtag：{tags}")
         app = KSVideo(title, file, tags, publish_datetimes[index], account_file)
         asyncio.run(app.main(), debug=False)
+
+        sleep(120)

@@ -78,5 +78,5 @@ if __name__ == '__main__':
                                             post_time=publish_datetimes[index].strftime("%Y-%m-%d %H:%M:%S"))
 
         beauty_print(note)
-        # 强制休眠30s，避免风控（必要）
-        sleep(30)
+        # 强制休眠 60s，避免风控（必要）
+        sleep(120)
