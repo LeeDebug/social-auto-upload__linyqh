@@ -39,7 +39,8 @@ if __name__ == '__main__':
         print(f"视频文件名：{file}")
         print(f"标题：{title}")
         print(f"Hashtag：{tags}")
-        app = KSVideo(title, file, tags, publish_datetimes[index], account_file)
+        # app = KSVideo(title, file, tags, publish_datetimes[index], account_file)
+        app = KSVideo(title, file, tags, 0, account_file)
         asyncio.run(app.main(), debug=False)
 
         sleep(120)

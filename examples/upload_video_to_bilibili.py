@@ -50,7 +50,8 @@ if __name__ == '__main__':
         print(f"Hashtag：{[tags_str]}")
         # I set desc same as title, do what u like.
         desc = title
-        bili_uploader = BilibiliUploader(cookie_data, file, title, desc, tid, [tags_str], timestamps[index])
+        # bili_uploader = BilibiliUploader(cookie_data, file, title, desc, tid, [tags_str], timestamps[index])
+        bili_uploader = BilibiliUploader(cookie_data, file, title, desc, tid, [tags_str], 0)
         bili_uploader.upload()
 
         # life is beautiful don't so rush. be kind be patience

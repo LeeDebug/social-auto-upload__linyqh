@@ -39,7 +39,9 @@ if __name__ == '__main__':
         print(f"video_hashtag：{tags}")
         if thumbnail_path.exists():
             print(f"thumbnail_file_name：{thumbnail_path}")
-            app = TiktokVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path)
+            # app = TiktokVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path)
+            app = TiktokVideo(title, file, tags, 0, account_file, thumbnail_path)
         else:
-            app = TiktokVideo(title, file, tags, publish_datetimes[index], account_file)
+            # app = TiktokVideo(title, file, tags, publish_datetimes[index], account_file)
+            app = TiktokVideo(title, file, tags, 0, account_file)
         asyncio.run(app.main(), debug=False)
