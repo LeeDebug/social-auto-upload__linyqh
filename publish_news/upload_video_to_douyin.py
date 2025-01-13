@@ -34,6 +34,7 @@ if __name__ == '__main__':
     cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
 
     for index, file in enumerate(files):
+        print(f"开始发布第 {index} 个视频")
         # 获取视频文件对应的元数据文件路径
         meta_file_path = file.with_suffix('.txt')
 
@@ -54,3 +55,4 @@ if __name__ == '__main__':
         asyncio.run(app.main(), debug=False)
 
         sleep(120)
+        print(f"第 {index} 个视频发布结束")

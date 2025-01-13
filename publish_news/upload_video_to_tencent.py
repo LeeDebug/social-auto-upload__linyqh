@@ -36,6 +36,7 @@ if __name__ == '__main__':
     category = TencentZoneTypes.LIFESTYLE.value  # 标记原创需要否则不需要传
 
     for index, file in enumerate(files):
+        print(f"开始发布第 {index} 个视频")
         title, tags = get_title_and_hashtags(str(file))
         # 打印视频文件名、标题和 hashtag
         print(f"视频文件名：{file}")
@@ -46,3 +47,4 @@ if __name__ == '__main__':
         asyncio.run(app.main(), debug=False)
 
         sleep(120)
+        print(f"第 {index} 个视频发布结束")
