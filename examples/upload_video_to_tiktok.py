@@ -28,7 +28,7 @@ if __name__ == '__main__':
         raise ValueError("要发布的文件夹或视频不存在")
 
     publish_datetimes = generate_schedule_time_any_day(file_num, 1,
-                                                daily_times=[14], start_date="0")
+                                                daily_times=[7], start_date="1")
     cookie_setup = asyncio.run(tiktok_setup(account_file, handle=True))
 
     for index, file in enumerate(files):

@@ -232,8 +232,8 @@ class TiktokVideo(object):
                     break
                 else:
                     tiktok_logger.exception(f"  [-] Exception: {e}")
-                    tiktok_logger.info("  [-] video publishing")
-                    await page.screenshot(full_page=True)
+                    tiktok_logger.info("  [-] video publishing 1")
+                    # await page.screenshot(full_page=True)
                     await asyncio.sleep(0.5)
 
     async def detect_upload_status(self, page):
