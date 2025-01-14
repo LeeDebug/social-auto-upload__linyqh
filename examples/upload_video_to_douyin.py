@@ -28,7 +28,7 @@ if __name__ == '__main__':
         raise ValueError("要发布的文件夹或视频不存在")
 
     publish_datetimes = generate_schedule_time_any_day(file_num, 1,
-                                                daily_times=[11], start_date="0")
+                                                daily_times=[14], start_date="0")
     cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
 
     for index, file in enumerate(files):
@@ -47,6 +47,6 @@ if __name__ == '__main__':
         print(f"标题：{title}")
         print(f"Hashtag：{tags}")
 
-        # app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
-        app = DouYinVideo(title, file, tags, 0, account_file, thumbnail_path=thumbnail_path)
+        app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
+        # app = DouYinVideo(title, file, tags, 0, account_file, thumbnail_path=thumbnail_path)
         asyncio.run(app.main(), debug=False)

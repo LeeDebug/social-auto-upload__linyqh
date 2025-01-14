@@ -276,8 +276,9 @@ class DouYinVideo(object):
             # 判断是是否进入视频发布页面，没进入，则自动等待到超时
             try:
                 # print("page: ", page)
+                # URL 里的 ** 是为了同时兼容 publish 和 post/video
                 await page.wait_for_url(
-                    "https://creator.douyin.com/creator-micro/content/publish?enter_from=publish_page"
+                    "https://creator.douyin.com/creator-micro/content/**?enter_from=publish_page"
                 )
                 break
             except:
