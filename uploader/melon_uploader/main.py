@@ -85,35 +85,84 @@ class MelonVideo(object):
                     break
                 else:
                     melon_logger.info("[+] 当前 td 元素中未找到未禁用的 button 元素")
-
-        melon_logger.info("[+] 完成第一步操作")
-
+        await asyncio.sleep(1)
 
 
 
         # 第二步：点击 id 是 section_time 且 class 是 cont_process 的 dd 标签中，
         # id 是 list_time 的 ul 标签中第一个 li 的 button 按钮
-        melon_logger.info("[+] 第二步：点击 id 是 section_time.cont_process dd 中 list_time ul li 的第一个 button 按钮")
-        time_button = page.locator("#section_time.cont_process dd #list_time ul li button").first
-        await time_button.click()
+        melon_logger.info("[+] 开始第二步操作：查找 id 是 section_time 且 class 是 cont_process 的元素")
+        section_time_element = page.locator("#section_time.cont_process")
+        melon_logger.info("[+] 成功找到 id 是 section_time 且 class 是 cont_process 的元素")
 
+        melon_logger.info("[+] 开始查找 dd 元素下 id 为 list_time 的 ul 元素")
+        # 先使用 locator 定位，再使用 element_handle 获取元素句柄
+        list_time_ul_locator = section_time_element.locator("#list_time.list_type")
+        list_time_ul = await list_time_ul_locator.element_handle()
+        if list_time_ul:
+            melon_logger.info("[+] 成功找到 dd 元素下 id 为 list_time 的 ul 元素")
 
+            melon_logger.info("[+] 开始遍历 ul 元素中的 li 元素")
+            # 遍历 ul 元素句柄，查找 li 元素
+            li_elements = await list_time_ul.query_selector_all("li")
+            melon_logger.info("[+] 成功获取 ul 元素中的 li 元素列表")
 
+            for li in li_elements:
+                melon_logger.info("[+] 开始查找 li 元素中的 button 元素")
+                button = await li.query_selector("button")
+                if button:
+                    melon_logger.info("[+] 找到第一个 button 元素，准备点击")
+                    await button.click()
+                    melon_logger.info("[+] 已点击第一个 button 元素")
+                    break
+                else:
+                    melon_logger.info("[+] 当前 li 元素中未找到 button 元素")
+        else:
+            melon_logger.info("[+] 当前 dd 元素下未找到 id 为 list_time 的 ul 元素")
+        await asyncio.sleep(1)
+
+        # 定义一个变量用于存储新窗口的引用
+        new_window__reservation = None
+        # 监听新页面事件
+        def on_new_page(new_page):
+            nonlocal new_window__reservation
+            new_window__reservation = new_page
+        context.on("page", on_new_page)
 
         # 第三步：点击 class 是 button btColorGreen reservationBtn 的 button 按钮
         melon_logger.info("[+] 第三步：点击 class 是 button.btColorGreen.reservationBtn 的 button 按钮")
         reservation_button = page.locator("button.button.btColorGreen.reservationBtn")
         await reservation_button.click()
-
+        melon_logger.info("[+] 点击操作完成，等待新页面出现完成")
+        await asyncio.sleep(2)
 
 
 
         # 第四步：监听新窗口打开，命名为 reservationPage，并将后续操作移至新窗口
         melon_logger.info("[+] 第四步：监听新窗口打开，并将操作移至新窗口")
-        async with page.context.expect_page() as new_page_info:
-            await reservation_button.click()  # 再次点击触发新页面
-        reservation_page = await new_page_info.value
-        await reservation_page.wait_for_load_state("load")  # 等待新页面加载完成
+        try:
+            melon_logger.info("[+] 开始监听新窗口的上下文创建")
+            # async with browser.contexts[-1].expect_event("page") as new_context_info:
+            # 等待新窗口打开并加载
+            if new_window__reservation:
+                await new_window__reservation.wait_for_load_state()
+                print("新窗口的 URL:", new_window__reservation.url)
+
+                # 在新窗口上执行操作
+                # await new_window__reservation.screenshot(path="new_window__reservation.png")  # 截图保存
+
+                print("正在等待新页面打开...")
+                # 这里可以执行其他异步操作，例如等待几秒钟
+                await asyncio.sleep(1)
+                print("在等待新页面打开的同时，这里可以做其他事情")
+                print("new_context_info 1:", new_window__reservation)
+                # 这里应该是触发新窗口打开的操作，例如点击一个按钮
+            melon_logger.info("[+] 新页面已完全加载")
+        except Exception as e:
+            melon_logger.error(f"[!] 监听新页面打开或页面加载失败: {str(e)}")
+            return
+        print("new_context_info 233:", new_window__reservation)
+        await asyncio.sleep(5)
 
 
 
@@ -121,23 +170,54 @@ class MelonVideo(object):
         # 第五步：将 reservationPage 页面中，id 是 certification 的 div 中，
         # class 是 ac 的 h3 标签背景换成浅红色
         melon_logger.info("[+] 第五步：将 reservationPage 页面中 certification div 的.ac h3 标签背景换成浅红色")
-        await reservation_page.evaluate(
-            "document.querySelector('#certification.ac h3').style.backgroundColor = 'lightcoral';"
-        )
+        await new_window__reservation.evaluate("""
+            () => {
+                const h3Element = document.getElementById('certification');
+                if (h3Element) {
+                    h3Element.style.backgroundColor = 'lightcoral';  // 浅红色
+                }
+            }
+        """)
         melon_logger.info("[+] 页面操作完成，已将背景改为浅红色")
+
+
+        # 关闭弹出的选票页面
+        await new_window__reservation.close()
+        await asyncio.sleep(2)
+
+
 
         """
         #endregion 执行 Melon 抢票的新逻辑
         """
 
 
-
-
         await page.goto("https://www.baidu.com")
 
         await context.storage_state(path=self.account_file)  # 保存Cookie
         melon_logger.info('cookie更新完毕！')
-        await context.close()
+        await asyncio.sleep(2)
+        # 检查上下文是否仍然活跃
+        try:
+            await context.pages[0].evaluate("() => console.log('Context is active')")
+            print("上下文仍然活跃")
+        except Exception as e:
+            print(f"上下文已关闭: {e}")
+        await asyncio.sleep(2)
+
+        # 使用状态变量管理关闭逻辑
+        # if context:
+        #     try:
+        #         await context.close()
+        #     except Exception as close_error:
+        #         melon_logger.warning(f"关闭上下文时出错: {close_error}")
+        # await asyncio.sleep(2)
+        #
+        # if browser:
+        #     try:
+        #         await browser.close()
+        #     except Exception as close_error:
+        #         melon_logger.warning(f"关闭浏览器时出错: {close_error}")
 
     # 设置定时发布时间
     async def set_schedule_time(self, page, publish_date):
