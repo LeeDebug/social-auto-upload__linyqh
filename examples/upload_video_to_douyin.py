@@ -47,6 +47,6 @@ if __name__ == '__main__':
         print(f"标题：{title}")
         print(f"Hashtag：{tags}")
 
-        app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
-        # app = DouYinVideo(title, file, tags, 0, account_file, thumbnail_path=thumbnail_path)
+        # app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
+        app = DouYinVideo(title, file, tags, 0, account_file, thumbnail_path=thumbnail_path)
         asyncio.run(app.main(), debug=False)
