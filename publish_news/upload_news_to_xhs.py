@@ -80,7 +80,8 @@ if __name__ == '__main__':
                                             # post_time = publish_datetimes[index].strftime("%Y-%m-%d %H:%M:%S"))
 
         beauty_print(note)
-        # 强制休眠 60s，避免风控（必要）
-        sleep(120)
+
         print(f"第 {index} 个视频发布结束")
+        # 强制休眠 120s，避免风控（必要）
+        sleep(120)
 

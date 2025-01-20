@@ -46,5 +46,6 @@ if __name__ == '__main__':
         app = TencentVideo(title, file, tags, 0, account_file, category)
         asyncio.run(app.main(), debug=False)
 
-        sleep(120)
         print(f"第 {index} 个视频发布结束")
+        # 强制休眠 120s，避免风控（必要）
+        sleep(120)
