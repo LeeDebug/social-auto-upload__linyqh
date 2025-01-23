@@ -34,7 +34,7 @@ if __name__ == '__main__':
     cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
 
     for index, file in enumerate(files):
-        print(f"开始发布第 {index} 个视频")
+        print(f"开始发布第 {index+1} 个视频")
         # 获取视频文件对应的元数据文件路径
         meta_file_path = file.with_suffix('.txt')
 
@@ -54,6 +54,6 @@ if __name__ == '__main__':
         app = DouYinVideo(title, file, tags, 0, account_file, thumbnail_path=thumbnail_path)
         asyncio.run(app.main(), debug=False)
 
-        print(f"第 {index} 个视频发布结束")
+        print(f"第 {index+1} 个视频发布结束")
         # 强制休眠 120s，避免风控（必要）
         sleep(120)

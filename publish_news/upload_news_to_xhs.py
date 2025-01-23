@@ -46,7 +46,7 @@ if __name__ == '__main__':
                                                 daily_times=[6,6,7,7,7,7,8,8,8,8], start_date="1")
 
     for index, file in enumerate(files):
-        print(f"开始发布第 {index} 个视频")
+        print(f"开始发布第 {index+1} 个视频")
         title, tags = get_title_and_hashtags(str(file))
         # 加入到标题 补充标题（xhs 可以填1000字不写白不写）
         tags_str = ' '.join(['#' + tag for tag in tags])
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
         beauty_print(note)
 
-        print(f"第 {index} 个视频发布结束")
+        print(f"第 {index+1} 个视频发布结束")
         # 强制休眠 120s，避免风控（必要）
         sleep(120)
 
