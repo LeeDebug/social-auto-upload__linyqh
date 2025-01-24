@@ -90,10 +90,12 @@ class BaiJiaHaoVideo(object):
             browser = await playwright.chromium.launch(
                 headless=False,
                 executable_path=self.local_executable_path,
+                args=['--window-size=1920,1080']  # 设置启动窗口大小为 1920x1080
             )
         else:
             browser = await playwright.chromium.launch(
-                headless=False
+                headless=False,
+                args=['--window-size=1920,1080']  # 设置启动窗口大小为 1920x1080
             )  # 创建一个浏览器上下文，使用指定的 cookie 文件
         context = await browser.new_context(storage_state=f"{self.account_file}")
         context = await set_init_script(context)
@@ -227,8 +229,10 @@ class BaiJiaHaoVideo(object):
         # 确保新页面 URL 符合要求
         print("新页面已打开，new_page 是: ", new_page)
         if new_page:
-            print("new_page.url(): ", new_page.url())
-            new_page_url = await new_page.url()
+            print("new_page: ", new_page)
+            # print("new_page.url: ", new_page.url)
+            # print("new_page.url(): ", new_page.url())
+            new_page_url = new_page.url
             print("new_page_url: ", new_page_url)
             if new_page_url.startswith("https://aigc.baidu.com/builder/aigc?"):
                 baijiahao_logger.info(f"[+] 新页面已成功打开，URL: {new_page_url}")
