@@ -138,7 +138,7 @@ class TencentVideo(object):
         browser = await playwright.chromium.launch(
             headless=False,
             executable_path=self.local_executable_path,
-            ignore_default_args=["--mute-audio"]
+            args=["--mute-audio"]  # 添加这个参数来关闭声音
         )
         # 创建一个浏览器上下文，使用指定的 cookie 文件
         context = await browser.new_context(storage_state=f"{self.account_file}")
@@ -192,7 +192,7 @@ class TencentVideo(object):
                 publish_buttion = page.locator('div.form-btns button:has-text("发表")')
                 if await publish_buttion.count():
                     await publish_buttion.click()
-                await page.wait_for_url("https://channels.weixin.qq.com/platform/post/list", timeout=1500)
+                await page.wait_for_url("https://channels.weixin.qq.com/platform/post/list", timeout=5000)
                 tencent_logger.success("  [-]视频发布成功")
                 break
             except Exception as e:
