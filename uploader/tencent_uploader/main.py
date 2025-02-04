@@ -192,7 +192,7 @@ class TencentVideo(object):
                 publish_buttion = page.locator('div.form-btns button:has-text("发表")')
                 if await publish_buttion.count():
                     await publish_buttion.click()
-                await page.wait_for_url("https://channels.weixin.qq.com/platform/post/list", timeout=5000)
+                await page.wait_for_url("https://channels.weixin.qq.com/platform/post/list", timeout=10000)
                 tencent_logger.success("  [-]视频发布成功")
                 break
             except Exception as e:
@@ -203,7 +203,7 @@ class TencentVideo(object):
                 else:
                     tencent_logger.exception(f"  [-] Exception: {e}")
                     tencent_logger.info("  [-] 视频正在发布中...")
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(2)
 
     async def detect_upload_status(self, page):
         while True:
