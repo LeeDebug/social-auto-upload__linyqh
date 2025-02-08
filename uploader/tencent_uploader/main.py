@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+import random
 
 from playwright.async_api import Playwright, async_playwright
 import os
@@ -157,7 +158,7 @@ class TencentVideo(object):
         # 填充标题和话题
         await self.add_title_tags(page)
         # 添加商品
-        # await self.add_product(page)
+        await self.add_product(page)
         # 合集功能
         await self.add_collection(page)
         # 原创选择
@@ -168,7 +169,7 @@ class TencentVideo(object):
             await self.set_schedule_time_tencent(page, self.publish_date)
         # 添加短标题
         await self.add_short_title(page)
-
+        # 点击发布
         await self.click_publish(page)
 
         await context.storage_state(path=f"{self.account_file}")  # 保存cookie
@@ -234,6 +235,45 @@ class TencentVideo(object):
             await page.keyboard.type("#" + tag)
             await page.keyboard.press("Space")
         tencent_logger.info(f"成功添加hashtag: {len(self.tags)}")
+
+    async def add_product(self, page):
+        product_link_base = page.locator("div").filter(has_text="链接").locator("..").locator(
+            "div.post-link-wrap")
+        # 点击链接
+        await product_link_base.click()
+        print("点击了 product_link_base 按钮")
+        # 选择商品那个
+        product_option_link = product_link_base.locator("div.link-list-options > div:has-text('商品')")
+        print("product_option_link 的 count: ", await product_option_link.count())
+        if await product_option_link.count():
+            await product_option_link.click()
+            print("点击了 product_option_link 按钮")
+            # await page.locator("div").filter(has_text=re.compile(r"^链接$")).locator("..").locator(
+            #     "div.post-link-wrap").locator("div.link-list-options > div").nth(3).click
+            # 点击下方新出现的div 商品链接框，准备弹出商品选择弹窗
+            await page.locator("div.post-component-choose-wrap").click()
+            print("点击了 post-component-choose-wrap 按钮")
+            # 休眠2秒，等待加载
+            await asyncio.sleep(2)
+            # 判断是否有商品
+            product_table_base = page.locator("div.ant-table-body table tr.ant-table-row")
+            product_count = await product_table_base.count()
+            print(f"橱窗共有：{product_count} 件商品")
+            if product_count:
+                # 添加商品名称
+                # 随机选择某个商品
+                product_obj = product_table_base.nth(random.randint(0, product_count - 1))
+                # 打印商品名
+                product_name = await product_obj.locator("div.title").inner_text()
+                print(f"本次发布添加商品名称为：{product_name}")
+                # 选择该商品
+                await product_obj.click()
+                await page.get_by_role("button", name="添加").click()
+            else:
+                print("该账号未添加任何橱窗商品！")
+                await asyncio.sleep(1)
+                # 关闭按钮
+                await page.get_by_text("从橱窗添加商品").locator("xpath=following-sibling::button").click()
 
     async def add_collection(self, page):
         collection_elements = page.get_by_text("添加到合集").locator("xpath=following-sibling::div").locator(
