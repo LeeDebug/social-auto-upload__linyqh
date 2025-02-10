@@ -245,12 +245,16 @@ class TencentVideo(object):
         # 选择商品那个
         product_option_link = product_link_base.locator("div.link-list-options > div:has-text('商品')")
         print("product_option_link 的 count: ", await product_option_link.count())
+        if "今日已到达上限" in await product_option_link.text_content():
+            print("文本中包含 '今日已到达上限'，跳出 add_product 函数")
+            return
         if await product_option_link.count():
             await product_option_link.click()
             print("点击了 product_option_link 按钮")
             # await page.locator("div").filter(has_text=re.compile(r"^链接$")).locator("..").locator(
             #     "div.post-link-wrap").locator("div.link-list-options > div").nth(3).click
             # 点击下方新出现的div 商品链接框，准备弹出商品选择弹窗
+            await asyncio.sleep(1)
             await page.locator("div.post-component-choose-wrap").click()
             print("点击了 post-component-choose-wrap 按钮")
             # 休眠2秒，等待加载
