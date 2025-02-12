@@ -253,9 +253,9 @@ class DouYinVideo(object):
     async def upload(self, playwright: Playwright) -> None:
         # 使用 Chromium 浏览器启动一个浏览器实例
         if self.local_executable_path:
-            browser = await playwright.chromium.launch(headless=True, executable_path=self.local_executable_path)
+            browser = await playwright.chromium.launch(headless=False, executable_path=self.local_executable_path)
         else:
-            browser = await playwright.chromium.launch(headless=True)
+            browser = await playwright.chromium.launch(headless=False)
         # 创建一个浏览器上下文，使用指定的 cookie 文件
         context = await browser.new_context(storage_state=f"{self.account_file}")
         context = await set_init_script(context)
@@ -333,6 +333,9 @@ class DouYinVideo(object):
         # 更换可见元素
         await self.set_location(page, "青岛市")
 
+        # 添加商品
+        # await self.set_shopping_cart(page, "https://haohuo.jinritemai.com/ecommerce/trade/detail/index.html?id=3734985620414660624&origin_type=604")
+
         # 頭條/西瓜
         third_part_element = '[class^="info"] > [class^="first-part"] div div.semi-switch'
         # 定位是否有第三方平台
@@ -390,6 +393,16 @@ class DouYinVideo(object):
         await page.keyboard.type(location)
         await page.wait_for_selector('div[role="listbox"] [role="option"]', timeout=5000)
         await page.locator('div[role="listbox"] [role="option"]').first.click()
+
+    # 在商品管理中: https://fxg.jinritemai.com/ffa/g/list?btm_ppre=a2427.b76571.c902327.d871297&btm_pre=a2427.b76571.c902327.d871297&btm_show_id=fee85aed-b25a-4a21-a97b-2756a67e5187
+    async def set_shopping_cart(self, page: Page, url: str = "www.jngxee.top"):
+        await page.get_by_text('添加标签').locator("..").locator("..").locator("xpath=following-sibling::div").locator(
+            "div.semi-select-single").nth(0).click()
+        await page.locator('div.semi-select-option div:has-text("购物车")').click()
+        await page.locator('input[placeholder="粘贴商品链接"]').click()
+        await page.keyboard.type(url)
+        await page.locator('span:has-text("添加链接")').click()
+        await asyncio.sleep(1000000)  # 这里延迟是为了方便眼睛直观的观看
 
     async def main(self):
         async with async_playwright() as playwright:
