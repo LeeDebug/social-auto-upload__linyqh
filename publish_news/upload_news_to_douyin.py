@@ -15,6 +15,7 @@ if str(project_root) not in sys.path:
 from conf import BASE_DIR
 from uploader.douyin_uploader.main import douyin_setup, DouYinVideo
 from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
+from utils.log import douyin_logger
 
 
 if __name__ == '__main__':
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     cookie_setup = asyncio.run(douyin_setup(account_file, handle=False))
 
     for index, file in enumerate(files):
-        print(f"开始发布第 {index+1} 个视频")
+        douyin_logger.info(f"开始发布第 {index+1} 个视频")
         # 获取视频文件对应的元数据文件路径
         meta_file_path = file.with_suffix('.txt')
 
@@ -46,14 +47,14 @@ if __name__ == '__main__':
             title, tags = "默认标题", ["#默认标签"]
 
         thumbnail_path = file.with_suffix('.png') if file.with_suffix('.png').exists() else None
-        print(f"视频文件名：{file}")
-        print(f"标题：{title}")
-        print(f"Hashtag：{tags}")
+        douyin_logger.info(f"视频文件名：{file}")
+        douyin_logger.info(f"标题：{title}")
+        douyin_logger.info(f"Hashtag：{tags}")
 
         # app = DouYinVideo(title, file, tags, publish_datetimes[index], account_file, thumbnail_path=thumbnail_path)
         app = DouYinVideo(title, file, tags, 0, account_file, thumbnail_path=thumbnail_path)
         asyncio.run(app.main(), debug=False)
 
-        print(f"第 {index+1} 个视频发布结束")
+        douyin_logger.info(f"第 {index+1} 个视频发布结束")
         # 强制休眠 120s，避免风控（必要）
         sleep(120)

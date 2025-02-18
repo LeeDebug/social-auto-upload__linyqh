@@ -16,6 +16,7 @@ if str(project_root) not in sys.path:
 from conf import BASE_DIR
 from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
 from uploader.xhs_uploader.main import sign_local, beauty_print
+from utils.log import xhs_logger
 
 config = configparser.RawConfigParser()
 config.read(Path(BASE_DIR / "cookies" / "xhs_uploader" / "accounts-159.ini"))
@@ -39,14 +40,14 @@ if __name__ == '__main__':
     try:
         xhs_client.get_video_first_frame_image_id("3214")
     except:
-        print("cookie 失效")
+        xhs_logger.info("cookie 失效")
         exit()
 
     publish_datetimes = generate_schedule_time_any_day(file_num, 10,
                                                 daily_times=[6,6,7,7,7,7,8,8,8,8], start_date="1")
 
     for index, file in enumerate(files):
-        print(f"开始发布第 {index+1} 个视频")
+        xhs_logger.info(f"开始发布第 {index+1} 个视频")
         title, tags = get_title_and_hashtags(str(file))
         # 加入到标题 补充标题（xhs 可以填1000字不写白不写）
         tags_str = ' '.join(['#' + tag for tag in tags])
@@ -54,9 +55,9 @@ if __name__ == '__main__':
         hash_tags = []
 
         # 打印视频文件名、标题和 hashtag
-        print(f"视频文件名：{file}")
-        print(f"标题：{title}")
-        print(f"Hashtag：{tags}")
+        xhs_logger.info(f"视频文件名：{file}")
+        xhs_logger.info(f"标题：{title}")
+        xhs_logger.info(f"Hashtag：{tags}")
 
         topics = []
         # 获取hashtag
@@ -68,7 +69,7 @@ if __name__ == '__main__':
                 hash_tag_name = topic_one['name']
                 hash_tags.append(hash_tag_name)
                 topics.append(topic_one)
-        print("topics: ", topics)
+        xhs_logger.info("topics: ", topics)
 
         hash_tags_str = ' ' + ' '.join(['#' + tag + '[话题]#' for tag in hash_tags])
 
@@ -81,7 +82,7 @@ if __name__ == '__main__':
 
         beauty_print(note)
 
-        print(f"第 {index+1} 个视频发布结束")
+        xhs_logger.info(f"第 {index+1} 个视频发布结束")
         # 强制休眠 120s，避免风控（必要）
         sleep(120)
 

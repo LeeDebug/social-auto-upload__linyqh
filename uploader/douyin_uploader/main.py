@@ -35,16 +35,16 @@ async def cookie_auth(account_file):
         try:
             await page.wait_for_url("https://creator.douyin.com/creator-micro/content/upload", timeout=5000)
         except:
-            print("[+] 等待5秒 cookie 失效")
+            douyin_logger.error("[+] 等待5秒 cookie 失效")
             await context.close()
             await browser.close()
             return False
         # 2024.06.17 抖音创作者中心改版
         if await page.get_by_text('手机号登录').count():
-            print("[+] 等待5秒 cookie 失效")
+            douyin_logger.error("[+] 等待5秒 cookie 失效")
             return False
         else:
-            print("[+] cookie 有效")
+            douyin_logger.info("[+] cookie 有效")
             return True
 
 
@@ -74,18 +74,18 @@ async def douyin_cookie_gen(account_file, phone_number):
             'headless': False
         }
         browser = await playwright.chromium.launch(**browser_options)
-        
+
         context_options = {
             'viewport': {'width': 1280, 'height': 720}
         }
         context = await browser.new_context(**context_options)
         context = await set_init_script(context)
         page = await context.new_page()
-        
+
         await page.goto("https://creator.douyin.com/")
-        
+
         await page.wait_for_load_state('networkidle')
-        
+
         # 尝试定位二维码
         qr_code_selectors = ['.login-scan-code', 'canvas.qrcode', 'img[alt="二维码"]', '[class*="qrcode"]']
         qr_code_element = None
@@ -97,7 +97,7 @@ async def douyin_cookie_gen(account_file, phone_number):
             except:
                 continue
 
-        print("qr_code_element: ", qr_code_element)
+        douyin_logger.info("qr_code_element: ", qr_code_element)
         if qr_code_element:
             await qr_code_element.scroll_into_view_if_needed()
             qr_code_path = os.path.join(os.path.dirname(account_file), 'douyin_login_qr.png')
@@ -111,16 +111,16 @@ async def douyin_cookie_gen(account_file, phone_number):
             full_page_path = os.path.join(os.path.dirname(account_file), 'douyin_full_page.png')
             await page.screenshot(path=full_page_path, full_page=True)
             douyin_logger.info(f'已保存完整页面截图：{full_page_path}')
-        
+
         douyin_logger.info('请在浏览器中完成登录操作')
-        
+
         login_success = False
         retry_count = 0
         max_retries = 30  # 最多等待5分钟（30 * 10秒）
 
         while not login_success and retry_count < max_retries:
             try:
-                print("循环检测第 1 步 => 扫码登录")
+                douyin_logger.info("循环检测第 1 步 => 扫码登录")
                 # 检查是否出现身份验证
                 if await page.wait_for_selector("text=扫码登录"): # 身份验证
                     douyin_logger.info("检测到身份验证")
@@ -195,7 +195,7 @@ async def douyin_cookie_gen(account_file, phone_number):
                     # else:
                     #     douyin_logger.info("未检测到'接收短信验证'按钮，可能不需要短信验证")
 
-                print("循环检测第 2 步 => 发布视频")
+                douyin_logger.info("循环检测第 2 步 => 发布视频")
                 # 检查是否已经登录成功
                 if await page.wait_for_selector("text=发布视频"):
                     douyin_logger.info("检测到'发布视频'，登录成功")
@@ -207,15 +207,15 @@ async def douyin_cookie_gen(account_file, phone_number):
                 retry_count += 1
                 await asyncio.sleep(1)  # 等待10秒后重试
 
-        print("login_success: ", login_success)
+        douyin_logger.info("login_success: ", login_success)
         if login_success:
             # 登录成功后保存cookie
             await context.storage_state(path=account_file)
-            print("account_file: ", account_file)
+            douyin_logger.info("account_file: ", account_file)
             douyin_logger.info(f'Cookie已保存至：{account_file}')
         else:
             douyin_logger.error("登录失败，请手动完成登录操作")
-        
+
         await browser.close()
 
 
@@ -326,12 +326,12 @@ class DouYinVideo(object):
         #     except:
         #         douyin_logger.info("  [-] 正上传视频中...")
         #         await asyncio.sleep(2)
-        
+
         #上传视频封面
         await self.set_thumbnail(page, self.thumbnail_path)
 
         # 更换可见元素
-        await self.set_location(page, "青岛市")
+        # await self.set_location(page, "青岛市")
 
         # 添加商品
         # await self.set_shopping_cart(page, "https://haohuo.jinritemai.com/ecommerce/trade/detail/index.html?id=3734985620414660624&origin_type=604")
@@ -366,13 +366,13 @@ class DouYinVideo(object):
 
         await context.storage_state(path=self.account_file)  # 保存cookie
         douyin_logger.success('  [-]cookie更新完毕！')
-        await asyncio.sleep(30)  # 这里延迟是为了方便眼睛直观的观看
+        await asyncio.sleep(5)  # 这里延迟是为了方便眼睛直观的观看
         # 关闭浏览上下文和浏览器实例
         await context.close()
         await browser.close()
-    
+
     async def set_thumbnail(self, page: Page, thumbnail_path: str):
-        print("thumbnail_path: ", thumbnail_path)
+        douyin_logger.info("thumbnail_path: ", thumbnail_path)
         if thumbnail_path:
             await page.click('text="选择封面"')
             await page.wait_for_selector("div.semi-modal-content.semi-modal-content-animate-show", state='visible')

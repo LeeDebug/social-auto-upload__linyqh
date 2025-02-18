@@ -15,6 +15,7 @@ if str(project_root) not in sys.path:
 from conf import BASE_DIR
 from uploader.ks_uploader.main import ks_setup, KSVideo
 from utils.files_times import generate_schedule_time_any_day, get_title_and_hashtags
+from utils.log import kuaishou_logger
 
 
 if __name__ == '__main__':
@@ -34,16 +35,16 @@ if __name__ == '__main__':
     cookie_setup = asyncio.run(ks_setup(account_file, handle=False))
 
     for index, file in enumerate(files):
-        print(f"开始发布第 {index+1} 个视频")
+        kuaishou_logger.info(f"开始发布第 {index+1} 个视频")
         title, tags = get_title_and_hashtags(str(file))
         # 打印视频文件名、标题和 hashtag
-        print(f"视频文件名：{file}")
-        print(f"标题：{title}")
-        print(f"Hashtag：{tags}")
+        kuaishou_logger.info(f"视频文件名：{file}")
+        kuaishou_logger.info(f"标题：{title}")
+        kuaishou_logger.info(f"Hashtag：{tags}")
         # app = KSVideo(title, file, tags, publish_datetimes[index], account_file)
         app = KSVideo(title, file, tags, 0, account_file)
         asyncio.run(app.main(), debug=False)
 
-        print(f"第 {index+1} 个视频发布结束")
+        kuaishou_logger.info(f"第 {index+1} 个视频发布结束")
         # 强制休眠 120s，避免风控（必要）
         sleep(120)
