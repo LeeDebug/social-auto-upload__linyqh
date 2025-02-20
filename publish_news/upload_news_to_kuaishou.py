@@ -20,7 +20,8 @@ from utils.log import kuaishou_logger
 
 if __name__ == '__main__':
     # 以今天日期当做要发布的文件夹
-    filepath = Path(BASE_DIR) / "videos" / "backups" / (datetime.now().strftime("%Y-%m-%d") + "_news")
+    # filepath = Path(BASE_DIR) / "videos" / "backups" / (datetime.now().strftime("%Y-%m-%d") + "_news")
+    filepath = Path(BASE_DIR) / "videos" / "backups" / "news"
     account_file = Path(BASE_DIR / "cookies" / "ks_uploader" / "account-159.json")
     # 获取视频目录
     folder_path = Path(filepath)

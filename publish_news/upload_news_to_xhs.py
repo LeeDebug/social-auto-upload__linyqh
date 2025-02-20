@@ -24,7 +24,8 @@ config.read(Path(BASE_DIR / "cookies" / "xhs_uploader" / "accounts-159.ini"))
 
 if __name__ == '__main__':
     # 以今天日期当做要发布的文件夹
-    filepath = Path(BASE_DIR) / "videos" / "backups" / (datetime.now().strftime("%Y-%m-%d") + "_news")
+    # filepath = Path(BASE_DIR) / "videos" / "backups" / (datetime.now().strftime("%Y-%m-%d") + "_news")
+    filepath = Path(BASE_DIR) / "videos" / "backups" / "news"
     # 获取视频目录
     folder_path = Path(filepath)
     # 获取文件夹中的所有文件
