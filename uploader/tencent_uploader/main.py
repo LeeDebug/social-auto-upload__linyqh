@@ -162,7 +162,7 @@ class TencentVideo(object):
         # 合集功能
         await self.add_collection(page)
         # 原创选择
-        await self.add_original(page)
+        # await self.add_original(page)
         # 检测上传状态
         await self.detect_upload_status(page)
         if self.publish_date != 0:
