@@ -84,6 +84,6 @@ if __name__ == '__main__':
         beauty_print(note)
 
         xhs_logger.info(f"第 {index+1} 个视频发布结束")
-        # 强制休眠 120s，避免风控（必要）
-        sleep(120)
+        # 强制休眠 60s，避免风控（必要）
+        sleep(60)
 
