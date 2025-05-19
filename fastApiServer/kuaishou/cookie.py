@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, Form, File
 from fastapi.responses import JSONResponse
 from pathlib import Path
 import subprocess
@@ -53,5 +53,30 @@ async def create_cookie(account_name: str):
 @router.post("/kuaishou/kuaishou_video_upload", 
     summary="快手视频上传接口",
     description="该接口用于上传视频到快手平台，支持视频文件、标题、描述等参数。")
-async def upload_kuaishou_video():
-    return  {"status": "success"}
+async def upload_kuaishou_video(
+    video_file: UploadFile = File(...),
+    account_name: str = Form(...),
+    title: str = Form(...),
+    tags: str = Form(...)
+):
+    """
+    快手视频上传接口
+    参数：
+    - account_name: 快手账号名称（唯一标识）
+    - video_file: 上传的视频文件
+    - title: 视频标题
+    - tags: 视频标签，多个标签用逗号分隔
+    """
+    try:
+        # 处理视频上传逻辑
+        # 这里可以添加调用快手上传脚本的代码
+        
+        return {
+            "status": "success",
+            "account_name": account_name,
+            "title": title,
+            "tags": tags,
+            "file_name": video_file.filename
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
