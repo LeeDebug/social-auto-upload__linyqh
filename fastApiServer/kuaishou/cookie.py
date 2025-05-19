@@ -50,7 +50,7 @@ async def create_cookie(account_name: str):
     result = await generate_ks_cookie(account_name)
     return JSONResponse(content=result)
 
-@router.post("/kuaishou/kuaishou_video_upload", 
+@router.post("/kuaishou_video_upload", 
     summary="快手视频上传接口",
     description="该接口用于上传视频到快手平台，支持视频文件、标题、描述等参数。")
 async def upload_kuaishou_video(
